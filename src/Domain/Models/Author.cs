@@ -3,36 +3,33 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.Models
-{
-[Table("Authors")]
-public class Author : IEntity<int>
-{
+namespace Domain.Models {
+  [Table("Authors")]
+  public class Author : IEntity<int> {
     [Key]
     public int Id {
-        get;
-        set;
+      get;
+      set;
     }
     [Required]
     [MaxLength(255)]
     public string FirstName {
-        get;
-        set;
+      get;
+      set;
     }
     [Required]
     [MaxLength(255)]
     public string LastName {
-        get;
-        set;
+      get;
+      set;
     }
     public string Email {
-        get;
-        set;
+      get;
+      set;
     }
     public IList<Article> Articles {
-        get;
-        set;
+      get;
+      set;
     }
-
-}
+  }
 }

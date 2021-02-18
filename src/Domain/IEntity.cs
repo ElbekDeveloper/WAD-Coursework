@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain
-{
-interface IEntity<TId>
-{
-    TId Id {
-        get;
-        set;
-    }
+namespace Domain {
+interface IEntity<TId> {
+  TId Id {
+    get;
+    set;
+  }
 }
 }
