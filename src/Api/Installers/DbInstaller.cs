@@ -1,4 +1,4 @@
-﻿using Api.Data;
+﻿using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
