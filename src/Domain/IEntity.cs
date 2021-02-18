@@ -4,8 +4,11 @@ using System.Text;
 
 namespace Domain
 {
-    interface IEntity<TId>
-    {
-        TId Id { get; set; }
+interface IEntity<TId>
+{
+    TId Id {
+        get;
+        set;
     }
+}
 }
