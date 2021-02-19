@@ -2,8 +2,8 @@
 
 namespace Core.Repositories
 {
-    public interface IAuthorRepository : IRepository<Author, int>
-    {
+public interface IAuthorRepository : IRepository<Author, int>
+{
 
-    }
+}
 }

@@ -6,15 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Api.Installers
 {
-    public class DbInstaller : IInstaller
+public class DbInstaller : IInstaller
+{
+    public void InstallServices(IServiceCollection services, IConfiguration configuration)
     {
-        public void InstallServices(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                            options.UseSqlServer(
-                                configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-         }
+        services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection")));
+        services.AddDefaultIdentity<IdentityUser>()
+        .AddEntityFrameworkStores<ApplicationDbContext>();
     }
+}
 }

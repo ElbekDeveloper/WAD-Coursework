@@ -5,16 +5,16 @@ using Microsoft.OpenApi.Models;
 
 namespace Api.Installers
 {
-    public class MvcInstaller : IInstaller
+public class MvcInstaller : IInstaller
+{
+    public void InstallServices(IServiceCollection services, IConfiguration configuration)
     {
-        public void InstallServices(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+        services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddSwaggerGen(x =>
-            {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Pen", Version = "v1" });
-            });
-        }
+        services.AddSwaggerGen(x =>
+        {
+            x.SwaggerDoc("v1", new OpenApiInfo { Title = "Pen", Version = "v1" });
+        });
     }
+}
 }

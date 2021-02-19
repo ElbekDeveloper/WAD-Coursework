@@ -2,7 +2,7 @@
 
 namespace Core.Repositories
 {
-    public interface IArticleRepository : IRepository<Article, int>
-    {
-    }
+public interface IArticleRepository : IRepository<Article, int>
+{
+}
 }
