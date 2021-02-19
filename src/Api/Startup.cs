@@ -5,58 +5,46 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Api
-{
-public class Startup
-{
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
+namespace Api {
+public class Startup {
+  public Startup(IConfiguration configuration) {
+    Configuration = configuration;
+  }
+
+  public IConfiguration Configuration { get; }
+
+  // This method gets called by the runtime. Use this method to add services to
+  // the container.
+  public void ConfigureServices(IServiceCollection services) {
+    services.InstallServicesInAssembly(Configuration);
+  }
+
+  // This method gets called by the runtime. Use this method to configure the
+  // HTTP request pipeline.
+  [System.Obsolete]
+  public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+    if (env.IsDevelopment()) {
+      app.UseDeveloperExceptionPage();
+    } else {
+      app.UseHsts();
     }
 
-    public IConfiguration Configuration {
-        get;
-    }
+    var swaggerOptions = new SwaggerOptions();
+    Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.InstallServicesInAssembly(Configuration);
-    }
+    app.UseSwagger(options => {
+      options.RouteTemplate = swaggerOptions.JsonRoute;
+    });
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    [System.Obsolete]
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-    {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-        else
-        {
-            app.UseHsts();
-        }
+    app.UseSwaggerUI(options => {
+      options.SwaggerEndpoint(swaggerOptions.UiEndpoint,
+                              swaggerOptions.Description);
+    });
 
-        var swaggerOptions = new SwaggerOptions();
-        Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
 
-        app.UseSwagger(options =>
-        {
-            options.RouteTemplate = swaggerOptions.JsonRoute;
-
-        });
-
-        app.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint
-            (swaggerOptions.UiEndpoint, swaggerOptions.Description);
-        }
-                        );
-
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-
-        app.UseAuthentication();
-    }
+    app.UseAuthentication();
+  }
 }
 }
