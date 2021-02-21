@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Domain.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Data
 {
@@ -12,5 +10,10 @@ namespace Infrastructure.Data
             : base(options)
         {
         }
+
+        public virtual DbSet<Author> Authors { get; set; }
+        public virtual DbSet<Article> Articles { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+
     }
 }
