@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,5 +20,6 @@ namespace Domain.Models
         [ForeignKey("Author")]
         public int AuthorId { get; set; }
         public virtual Author Author { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }
