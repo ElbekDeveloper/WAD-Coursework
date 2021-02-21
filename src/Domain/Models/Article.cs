@@ -11,7 +11,7 @@ namespace Domain.Models
         [Key]
         public int Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         [Required]
         [MaxLength(2000)]
         public string Title { get; set; }
