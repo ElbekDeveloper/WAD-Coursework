@@ -1,5 +1,6 @@
 ﻿using Api.Contracts.V1;
 using Core.Interfaces;
+using Core.Resources;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -28,6 +29,15 @@ namespace Api.Controllers.V1
         {
             return Ok(await _service.GetArticles());
         }
-
+        [HttpPost]
+        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Add Article", Type = typeof(ArticleResource))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult<IEnumerable<Article>>> AddArticle([FromBody]ArticleResource model,CancellationToken cancellationToken)
+        {
+            return Ok(await _service.AddArticle(model, cancellationToken));
         }
+
+
+
+    }
 }
