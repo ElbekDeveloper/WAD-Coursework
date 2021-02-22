@@ -4,6 +4,7 @@ using Core.Services;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Api.Installers
 {
@@ -13,6 +14,7 @@ namespace Api.Installers
         {
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IArticleRepository, ArticleRepository>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
     }
 }
