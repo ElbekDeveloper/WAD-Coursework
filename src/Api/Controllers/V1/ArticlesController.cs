@@ -23,16 +23,16 @@ namespace Api.Controllers.V1
         }
 
         [HttpGet]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Articles", Type = typeof(List<Article>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Articles", Type = typeof(IEnumerable<ArticleResource>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<IEnumerable<Article>>> GetArticles(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ArticleResource>>> GetArticles(CancellationToken cancellationToken)
         {
             return Ok(await _service.GetArticles());
         }
         [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Add Article", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<IEnumerable<Article>>> AddArticle([FromBody]ArticleResource model,CancellationToken cancellationToken)
+        public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]ArticleResource model, CancellationToken cancellationToken)
         {
             return Ok(await _service.AddArticle(model, cancellationToken));
         }
