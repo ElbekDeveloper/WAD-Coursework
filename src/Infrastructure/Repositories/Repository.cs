@@ -42,7 +42,11 @@ namespace Infrastructure.Repositories
 
         public virtual async Task<TModel> RemoveAsync(int id, CancellationToken cancellationToken = default)
         {
-            var entity =  await GetByIdAsync(id);
+            var entity = await GetByIdAsync(id, cancellationToken);
+            if (entity is null)
+            {
+                throw new ArgumentException("Entity Not Found");
+            }
             _dbContext.Set<TModel>().Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
