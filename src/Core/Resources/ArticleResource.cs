@@ -16,10 +16,6 @@ namespace Core.Resources
         [Required]
         public string Body { get; set; }
         public AuthorResource Author { get; set; }
-        public ICollection<TagResource> Tags { get; set; }
-        public ArticleResource()
-        {
-            Tags = new Collection<TagResource>();
-        }
+
     }
 }
