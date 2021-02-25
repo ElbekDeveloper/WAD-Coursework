@@ -21,10 +21,5 @@ namespace Domain.Models
         [ForeignKey("Author")]
         public int AuthorId { get; set; }
         public virtual Author Author { get; set; }
-        public ICollection<Tag> Tags { get; set; }
-        public Article()
-        {
-            Tags = new Collection<Tag>();
-        }
     }
 }
