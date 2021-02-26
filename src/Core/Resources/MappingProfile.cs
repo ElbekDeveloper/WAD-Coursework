@@ -14,6 +14,7 @@ namespace Core.Resources
 
             //From Resource to Domain model
             CreateMap<AddArticleResource, Article>();
+            CreateMap<AddAuthorResource, Author>();
             CreateMap<ArticleResource, Article>()
                 .ForMember(a => a.AuthorId, opt => opt.MapFrom(ar => ar.Author.Id));
         }
