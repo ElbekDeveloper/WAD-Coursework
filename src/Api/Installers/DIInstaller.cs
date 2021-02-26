@@ -13,6 +13,8 @@ namespace Api.Installers
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<IArticleService, ArticleService>();
+            services.AddTransient<IAuthorService, AuthorService>();
+            services.AddTransient<IAuthorRepository, AuthorRepository>();
             services.AddTransient<IArticleRepository, ArticleRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
