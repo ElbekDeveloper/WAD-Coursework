@@ -12,6 +12,5 @@ namespace Core.Interfaces
         Task<ArticleResource> DeleteArticle(int id, CancellationToken cancellationToken = default);
         Task<ArticleResource> GetArticle(int id, CancellationToken cancellationToken = default);
         Task<ArticleResource> UpdateArticle(int id, AddArticleResource articleResource, CancellationToken cancellationToken = default);
-
     }
 }
