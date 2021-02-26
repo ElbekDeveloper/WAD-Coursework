@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace Api
 {
@@ -23,12 +25,11 @@ namespace Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        [System.Obsolete]
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-              app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
@@ -38,7 +39,7 @@ namespace Api
             var swaggerOptions = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
 
-            app.UseSwagger(options => 
+            app.UseSwagger(options =>
             {
                 options.RouteTemplate = swaggerOptions.JsonRoute;
 
@@ -48,13 +49,25 @@ namespace Api
             {
                 options.SwaggerEndpoint
                 (swaggerOptions.UiEndpoint, swaggerOptions.Description);
-             }
+            }
             );
+
+            app.UseRouting();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect("/swagger/");
+                    return Task.CompletedTask;
+                });
+                endpoints.MapControllers();
+            });
         }
     }
 }
