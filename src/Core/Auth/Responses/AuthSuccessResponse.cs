@@ -1,10 +1,8 @@
-﻿namespace Core.Auth.Responses
-{
-public class AuthSuccessResponse
-{
+﻿namespace Core.Auth.Responses {
+  public class AuthSuccessResponse {
     public string Token {
-        get;
-        set;
+      get;
+      set;
     }
-}
+  }
 }

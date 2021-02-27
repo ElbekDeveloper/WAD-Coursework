@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.Auth.Models
-{
-public class AuthResult
-{
+namespace Core.Auth.Models {
+  public class AuthResult {
     public string Token {
-        get;
-        set;
+      get;
+      set;
     }
     public bool IsSuccessful {
-        get;
-        set;
+      get;
+      set;
     }
     public IEnumerable<string> Errors {
-        get;
-        set;
+      get;
+      set;
     }
-}
+  }
 }
