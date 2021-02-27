@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IIdentityService
-    {
-        Task<AuthResult> RegisterAsync(string email, string password);
-    }
+public interface IIdentityService
+{
+    Task<AuthResult> RegisterAsync(string email, string password);
+}
 }

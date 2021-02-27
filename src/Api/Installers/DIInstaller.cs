@@ -8,16 +8,16 @@ using System;
 
 namespace Api.Installers
 {
-    public class DIInstaller : IInstaller
+public class DIInstaller : IInstaller
+{
+    public void InstallServices(IServiceCollection services, IConfiguration configuration)
     {
-        public void InstallServices(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddTransient<IArticleService, ArticleService>();
-            services.AddTransient<IAuthorService, AuthorService>();
-            services.AddTransient<IAuthorRepository, AuthorRepository>();
-            services.AddTransient<IArticleRepository, ArticleRepository>();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddScoped<IIdentityService, IdentityService>();
-        }
+        services.AddTransient<IArticleService, ArticleService>();
+        services.AddTransient<IAuthorService, AuthorService>();
+        services.AddTransient<IAuthorRepository, AuthorRepository>();
+        services.AddTransient<IArticleRepository, ArticleRepository>();
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddScoped<IIdentityService, IdentityService>();
     }
+}
 }

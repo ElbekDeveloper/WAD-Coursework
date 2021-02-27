@@ -10,65 +10,67 @@ using Core.Auth.Settings;
 
 namespace Api.Installers
 {
-    public class MvcInstaller : IInstaller
+public class MvcInstaller : IInstaller
+{
+    public void InstallServices(IServiceCollection services, IConfiguration configuration)
     {
-        public void InstallServices(IServiceCollection services, IConfiguration configuration)
+        var jwtSettings = new JwtSettings();
+        configuration.GetSection(nameof(jwtSettings)).Bind(jwtSettings);
+        services.AddSingleton(jwtSettings);
+
+        services.AddMvc(options =>
         {
-            var jwtSettings = new JwtSettings();
-            configuration.GetSection(nameof(jwtSettings)).Bind(jwtSettings);
-            services.AddSingleton(jwtSettings);
+            options.EnableEndpointRouting = false;
+        }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddMvc(options => 
+        services.AddAuthentication(x =>
+        {
+            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(x =>
+        {
+            x.SaveToken = true;
+            x.TokenValidationParameters = new TokenValidationParameters
             {
-                options.EnableEndpointRouting = false;
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+                ValidateIssuer = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true
+            };
+        });
 
-            services.AddAuthentication(x =>
+
+        services.AddSwaggerGen(x =>
+        {
+            x.SwaggerDoc("v1", new OpenApiInfo { Title = "Pen", Version = "v1" });
+            var security = new Dictionary<string, IEnumerable<string>>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(x =>
-                {
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
-                        ValidateIssuer = false,
-                        RequireExpirationTime = false,
-                        ValidateLifetime = true
-                    };
-                });
+                {"Bearer", new string[0] }
+            };
 
-
-            services.AddSwaggerGen(x =>
+            x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Pen", Version = "v1" });
-                var security = new Dictionary<string, IEnumerable<string>>
-                {
-                    {"Bearer", new string[0] }
-                };
-
-                x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the bearer scheme",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey
-                });
-
-                x.AddSecurityRequirement(new OpenApiSecurityRequirement 
-                {
-                    { new OpenApiSecurityScheme{ Reference = new OpenApiReference
-                    { 
-                        Id  = "Bearer", 
-                        Type   = ReferenceType.SecurityScheme
-                    } }, new List<string> ()}
-                });
+                Description = "JWT Authorization header using the bearer scheme",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey
             });
 
-        }
+            x.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {   new OpenApiSecurityScheme{ Reference = new OpenApiReference
+                        {
+                            Id  = "Bearer",
+                            Type   = ReferenceType.SecurityScheme
+                        }
+                    }, new List<string> ()
+                }
+            });
+        });
+
     }
+}
 }
