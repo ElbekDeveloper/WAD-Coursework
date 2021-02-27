@@ -1,5 +1,4 @@
-﻿using Api.Options;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Collections.Generic;
+using Core.Auth.Settings;
 
 namespace Api.Installers
 {
@@ -14,9 +14,9 @@ namespace Api.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            var jwtOptions = new JwtOptions();
-            configuration.GetSection(nameof(jwtOptions)).Bind(jwtOptions);
-            services.AddSingleton(jwtOptions);
+            var jwtSettings = new JwtSettings();
+            configuration.GetSection(nameof(jwtSettings)).Bind(jwtSettings);
+            services.AddSingleton(jwtSettings);
 
             services.AddMvc(options => 
             {
@@ -35,7 +35,7 @@ namespace Api.Installers
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
                         ValidateIssuer = false,
                         RequireExpirationTime = false,
                         ValidateLifetime = true
