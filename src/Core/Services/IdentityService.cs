@@ -53,6 +53,35 @@ namespace Core.Services
                     Errors = createdUser.Errors.Select(x => x.Description)
                 };
             }
+            return GenerateAuthResult(newUser);
+        }
+
+        public async Task<AuthResult> LoginAsync(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user==null)
+            {
+                return new AuthResult
+                {
+                    Errors = new[] { "User does not exist" }
+                };
+            }
+
+            var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
+
+            if (userHasValidPassword == false)
+            {
+                return new AuthResult
+                {
+                    Errors = new[] { "Login/Password combination does not match" }
+                };
+            }
+
+            return GenerateAuthResult(user);
+        }
+
+        private AuthResult GenerateAuthResult(IdentityUser newUser)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
