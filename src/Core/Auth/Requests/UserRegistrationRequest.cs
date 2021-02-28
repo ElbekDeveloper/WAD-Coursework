@@ -1,7 +1,10 @@
-﻿namespace Core.Auth.Requests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Core.Auth.Requests
 {
     public class UserRegistrationRequest
     {
+        [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
     }
