@@ -3,6 +3,7 @@ using Core.Interfaces;
 using Core.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -23,6 +24,7 @@ namespace Api.Controllers.V1
     {
         private IArticleService _service;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly HttpContext _context;
 
 
         public ArticlesController(IArticleService service, UserManager<IdentityUser> userManager)
@@ -58,8 +60,7 @@ namespace Api.Controllers.V1
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var userId = user?.Id;
+            var userId = HttpContext.User.Claims.SingleOrDefault(x => x.Type == "id").Value;
             
             return Ok(await _service.AddArticle(userId, model, cancellationToken));
         }
