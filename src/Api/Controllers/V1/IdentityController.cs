@@ -43,7 +43,9 @@ namespace Api.Controllers.V1
             }
             var successResult = new AuthSuccessResponse
             {
-                Token = authResult.Token
+                Token = authResult.Token,
+                RefreshToken = authResult.RefreshToken
+
             };
             return Ok(successResult);
          }
@@ -64,7 +66,8 @@ namespace Api.Controllers.V1
             }
             var successResult = new AuthSuccessResponse
             {
-                Token = authResult.Token
+                Token = authResult.Token, 
+                RefreshToken = authResult.RefreshToken
             };
             return Ok(successResult);
         }
