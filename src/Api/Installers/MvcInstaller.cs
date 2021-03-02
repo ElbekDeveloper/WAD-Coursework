@@ -29,16 +29,20 @@ namespace Api.Installers
                 x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(x =>
+                .AddJwtBearer(cfg =>
                 {
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
                         ValidateIssuer = false,
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidateAudience = false,
+                        ValidAudience = jwtSettings.Audience,
                         RequireExpirationTime = false,
-                        ValidateLifetime = true
+                        ValidateLifetime = true,
                     };
                 });
 
