@@ -11,7 +11,7 @@ namespace Infrastructure.Data
         {
         }
 
-        public virtual DbSet<Author> Authors { get; set; }
+        //public virtual DbSet<Author> Authors { get; set; }
         public virtual DbSet<Article> Articles { get; set; }
 
     }
