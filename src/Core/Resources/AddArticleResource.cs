@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Core.Resources
 {
@@ -11,6 +9,5 @@ namespace Core.Resources
         public string Title { get; set; }
         [Required]
         public string Body { get; set; }
-        public int AuthorId { get; set; }
     }
 }
