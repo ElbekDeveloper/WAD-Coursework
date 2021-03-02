@@ -1,4 +1,5 @@
 ﻿using Api.Contracts.V1;
+using Core.Auth.Extensions;
 using Core.Interfaces;
 using Core.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,7 +61,9 @@ namespace Api.Controllers.V1
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
         {
-            var userId = HttpContext.User.Claims.SingleOrDefault(x => x.Type == "id").Value;
+            //The method should be moved to infrasturcture layer. 
+            //Cz the core should not know what type of auth we are using to verify users 
+            var userId = UserExtension.GetUserId(HttpContext);
             
             return Ok(await _service.AddArticle(userId, model, cancellationToken));
         }
