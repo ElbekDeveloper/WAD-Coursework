@@ -7,5 +7,6 @@ namespace Core.Interfaces
     {
         Task<AuthResult> RegisterAsync(string email, string password);
         Task<AuthResult> LoginAsync(string email, string password);
+        Task<bool> CheckUserOwns(int articleId, string userId);
     }
 }
