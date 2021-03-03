@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -19,7 +20,7 @@ namespace Domain.Models
         [Required]
         public string Body { get; set; }
         [ForeignKey("Author")]
-        public int AuthorId { get; set; }
-        public virtual Author Author { get; set; }
+        public string AuthorId { get; set; }
+        public virtual IdentityUser Author { get; set; }
     }
 }

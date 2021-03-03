@@ -1,27 +1,38 @@
 ﻿using Api.Contracts.V1;
+using Core.Auth.Extensions;
 using Core.Interfaces;
 using Core.Resources;
- using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Api.Controllers.V1
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route(ApiRoutes.Generic)]
     public class ArticlesController : Controller
     {
         private IArticleService _service;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly HttpContext _context;
 
-        public ArticlesController(IArticleService service)
+
+        public ArticlesController(IArticleService service, UserManager<IdentityUser> userManager)
         {
             _service = service;
+            _userManager = userManager;
         }
-
         [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Articles", Type = typeof(IEnumerable<ArticleResource>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
@@ -50,7 +61,11 @@ namespace Api.Controllers.V1
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
         {
-            return Ok(await _service.AddArticle(model, cancellationToken));
+            //The method should be moved to infrasturcture layer. 
+            //Cz the core should not know what type of auth we are using to verify users 
+            var userId = UserExtension.GetUserId(HttpContext);
+            
+            return Ok(await _service.AddArticle(userId, model, cancellationToken));
         }
 
         [HttpPut]

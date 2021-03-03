@@ -8,7 +8,7 @@ namespace Core.Interfaces
     public  interface IArticleService
     {
         Task<IEnumerable<ArticleResource>> GetArticles();
-        Task<ArticleResource> AddArticle(AddArticleResource articleResource, CancellationToken cancellationToken= default);
+        Task<ArticleResource> AddArticle(string userId, AddArticleResource articleResource, CancellationToken cancellationToken= default);
         Task<ArticleResource> DeleteArticle(int id, CancellationToken cancellationToken = default);
         Task<ArticleResource> GetArticle(int id, CancellationToken cancellationToken = default);
         Task<ArticleResource> UpdateArticle(int id, AddArticleResource articleResource, CancellationToken cancellationToken = default);

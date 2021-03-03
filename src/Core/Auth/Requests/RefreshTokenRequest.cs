@@ -1,6 +1,6 @@
-﻿namespace Core.Auth.Responses
+﻿namespace Core.Auth.Requests
 {
-    public class AuthSuccessResponse
+    public class RefreshTokenRequest
     {
         public string Token { get; set; }
         public string RefreshToken { get; set; }

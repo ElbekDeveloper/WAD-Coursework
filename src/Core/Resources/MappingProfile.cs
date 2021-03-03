@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Core.Resources
 {
@@ -9,12 +10,14 @@ namespace Core.Resources
         {
             //Domain to Api Resources
             CreateMap<Article, ArticleResource>();
-            CreateMap<Author, AuthorResource>().ReverseMap();
-
+            CreateMap<IdentityUser, AuthorResource>()
+                .ForMember(ar => ar.Name, opt => opt.MapFrom(u => u.UserName));
 
             //From Resource to Domain model
             CreateMap<AddArticleResource, Article>();
-            CreateMap<AddAuthorResource, Author>();
+            CreateMap<AuthorResource, IdentityUser>()
+                .ForMember(u => u.UserName, opt => opt.MapFrom(ar => ar.Name))
+                .ForMember(u => u.Id, opt => opt.MapFrom(ar => ar.Id));
             CreateMap<ArticleResource, Article>()
                 .ForMember(a => a.AuthorId, opt => opt.MapFrom(ar => ar.Author.Id));
         }

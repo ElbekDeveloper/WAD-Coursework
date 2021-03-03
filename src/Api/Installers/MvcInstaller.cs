@@ -16,6 +16,20 @@ namespace Api.Installers
         {
             var jwtSettings = new JwtSettings();
             configuration.GetSection(nameof(jwtSettings)).Bind(jwtSettings);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+                ValidateIssuer = false,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidateAudience = false,
+                ValidAudience = jwtSettings.Audience,
+                RequireExpirationTime = false,
+                ValidateLifetime = true,
+            };
+
+            services.AddSingleton(tokenValidationParameters);
             services.AddSingleton(jwtSettings);
 
             services.AddMvc(options => 
@@ -29,17 +43,11 @@ namespace Api.Installers
                 x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(x =>
+                .AddJwtBearer(cfg =>
                 {
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
-                        ValidateIssuer = false,
-                        RequireExpirationTime = false,
-                        ValidateLifetime = true
-                    };
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = tokenValidationParameters;
                 });
 
 

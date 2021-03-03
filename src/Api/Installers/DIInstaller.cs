@@ -14,6 +14,7 @@ namespace Api.Installers
         {
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IAuthorService, AuthorService>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddTransient<IAuthorRepository, AuthorRepository>();
             services.AddTransient<IArticleRepository, ArticleRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
