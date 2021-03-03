@@ -1,17 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.Auth.Requests
-{
-public class UserRegistrationRequest
-{
+namespace Core.Auth.Requests {
+  public class UserRegistrationRequest {
     [EmailAddress]
     public string Email {
-        get;
-        set;
+      get;
+      set;
     }
     public string Password {
-        get;
-        set;
+      get;
+      set;
     }
-}
+  }
 }

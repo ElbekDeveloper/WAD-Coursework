@@ -3,44 +3,41 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.Models
-{
-public class RefreshToken
-{
+namespace Domain.Models {
+  public class RefreshToken {
     [Key]
     public string Token {
-        get;
-        set;
+      get;
+      set;
     }
     public string JwtId {
-        get;
-        set;
+      get;
+      set;
     }
     public DateTime CreatedDate {
-        get;
-        set;
+      get;
+      set;
     }
-    public DateTime  ExpiryDate {
-        get;
-        set;
+    public DateTime ExpiryDate {
+      get;
+      set;
     }
     public bool IsUsed {
-        get;
-        set;
+      get;
+      set;
     }
     public bool IsInvalid {
-        get;
-        set;
+      get;
+      set;
     }
     public string UserId {
-        get;
-        set;
+      get;
+      set;
     }
     [ForeignKey(nameof(UserId))]
     public IdentityUser User {
-        get;
-        set;
+      get;
+      set;
     }
-
-}
+  }
 }

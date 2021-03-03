@@ -2,37 +2,34 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Core.Resources
-{
-public class ArticleResource
-{
+namespace Core.Resources {
+  public class ArticleResource {
     public int Id {
-        get;
-        set;
+      get;
+      set;
     }
     [Required]
     [MaxLength(2000)]
     public string Title {
-        get;
-        set;
+      get;
+      set;
     }
     public DateTime CreatedDate {
-        get;
-        set;
+      get;
+      set;
     }
     public DateTime? UpdatedDate {
-        get;
-        set;
+      get;
+      set;
     }
     [Required]
     public string Body {
-        get;
-        set;
+      get;
+      set;
     }
     public AuthorResource Author {
-        get;
-        set;
+      get;
+      set;
     }
-
-}
+  }
 }

@@ -2,24 +2,19 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data
-{
-public class ApplicationDbContext : IdentityDbContext
-{
+namespace Infrastructure.Data {
+  public class ApplicationDbContext : IdentityDbContext {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) {}
 
-    //public virtual DbSet<Author> Authors { get; set; }
+    // public virtual DbSet<Author> Authors { get; set; }
     public virtual DbSet<Article> Articles {
-        get;
-        set;
+      get;
+      set;
     }
     public DbSet<RefreshToken> RefreshTokens {
-        get;
-        set;
+      get;
+      set;
     }
-
-}
+  }
 }

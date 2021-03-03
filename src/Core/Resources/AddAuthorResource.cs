@@ -1,14 +1,12 @@
-﻿namespace Core.Resources
-{
-public class AddAuthorResource
-{
+﻿namespace Core.Resources {
+  public class AddAuthorResource {
     public string Name {
-        get;
-        set;
+      get;
+      set;
     }
     public string Email {
-        get;
-        set;
+      get;
+      set;
     }
-}
+  }
 }

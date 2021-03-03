@@ -1,14 +1,12 @@
-﻿namespace Core.Auth.Requests
-{
-public class RefreshTokenRequest
-{
+﻿namespace Core.Auth.Requests {
+  public class RefreshTokenRequest {
     public string Token {
-        get;
-        set;
+      get;
+      set;
     }
     public string RefreshToken {
-        get;
-        set;
+      get;
+      set;
     }
-}
+  }
 }

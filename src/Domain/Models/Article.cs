@@ -5,43 +5,41 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.Models
-{
-[Table("Articles")]
-public class Article : IEntity<int>
-{
+namespace Domain.Models {
+  [Table("Articles")]
+  public class Article : IEntity<int> {
     [Key]
     public int Id {
-        get;
-        set;
+      get;
+      set;
     }
     public DateTime CreatedDate {
-        get;
-        set;
+      get;
+      set;
     }
     public DateTime? UpdatedDate {
-        get;
-        set;
+      get;
+      set;
     }
     [Required]
     [MaxLength(2000)]
     public string Title {
-        get;
-        set;
+      get;
+      set;
     }
     [Required]
     public string Body {
-        get;
-        set;
+      get;
+      set;
     }
     [ForeignKey("Author")]
     public string AuthorId {
-        get;
-        set;
+      get;
+      set;
     }
     public virtual IdentityUser Author {
-        get;
-        set;
+      get;
+      set;
     }
-}
+  }
 }

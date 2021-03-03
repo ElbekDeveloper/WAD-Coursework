@@ -1,24 +1,22 @@
 ﻿using System;
 
-namespace Core.Auth.Settings
-{
-public class JwtSettings
-{
+namespace Core.Auth.Settings {
+  public class JwtSettings {
     public string Secret {
-        get;
-        set;
+      get;
+      set;
     }
     public string Audience {
-        get;
-        set;
+      get;
+      set;
     }
     public string Issuer {
-        get;
-        set;
+      get;
+      set;
     }
     public TimeSpan TokenLifetime {
-        get;
-        set;
+      get;
+      set;
     }
-}
+  }
 }
