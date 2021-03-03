@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Core.Repositories
@@ -11,6 +12,7 @@ namespace Core.Repositories
         Task<AuthResult> CreateAsync(string email, string password);
         Task<AuthResult> LoginAsync(string email, string password);
         Task<bool> CheckUserOwnsArticle(int articleId, string userId);
+        Task<AuthResult> RefreshTokenAsync(string token, string refreshToken);
         
     }
 }

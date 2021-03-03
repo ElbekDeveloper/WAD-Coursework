@@ -71,5 +71,26 @@ namespace Api.Controllers.V1
             };
             return Ok(successResult);
         }
+        [HttpPost]
+        [Route("Refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
+        {
+            var authResult = await _service.RefreshTokenAsync(request.Token, request.RefreshToken);
+
+            if (authResult.IsSuccessful == false)
+            {
+                var failureResult = new AuthFailureResponse
+                {
+                    Errors = authResult.Errors
+                };
+                return BadRequest(failureResult);
+            }
+            var successResult = new AuthSuccessResponse
+            {
+                Token = authResult.Token,
+                RefreshToken = authResult.RefreshToken
+            };
+            return Ok(successResult);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Core.Auth.Models;
 using Core.Auth.Settings;
 using Core.Repositories;
+using Domain.Models;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -20,12 +21,13 @@ namespace Infrastructure.Repositories
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JwtSettings _jwtSettings;
         private readonly ApplicationDbContext _dbContext;
-        
-        public UserRepository(UserManager<IdentityUser> userManager, JwtSettings jwtSettings, ApplicationDbContext dbContext)
+        private TokenValidationParameters _tokenValidationParameters;
+        public UserRepository(UserManager<IdentityUser> userManager, JwtSettings jwtSettings, ApplicationDbContext dbContext, TokenValidationParameters tokenValidationParameters)
         {
             _userManager = userManager;
             _jwtSettings = jwtSettings;
             _dbContext = dbContext;
+            _tokenValidationParameters = tokenValidationParameters;
         }
         public async Task<bool> CheckUserOwnsArticle(int articleId, string userId)
         {
@@ -70,10 +72,10 @@ namespace Infrastructure.Repositories
                     Errors = createdUser.Errors.Select(x => x.Description)
                 };
             }
-            return GenerateAuthResult(newUser); ;
+            return await GenerateAuthResultAsync(newUser); ;
         }
 
-
+    
 
         public async Task<AuthResult> LoginAsync(string email, string password)
         {
@@ -96,12 +98,80 @@ namespace Infrastructure.Repositories
                 };
             }
 
-            return GenerateAuthResult(user);
+            return await GenerateAuthResultAsync(user);
         }
 
+        public async Task<AuthResult> RefreshTokenAsync(string token, string refreshToken)
+        {
+            var validatedToken = GetClaimsPrincipal(token);
+            if (validatedToken == null)
+            {
+                return new AuthResult { Errors = new[] { "Invalid Token" } };
+            }
+            var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+            var expiryDateUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(expiryDateUnix);
 
+            if (expiryDateUtc>DateTime.UtcNow)
+            {
+                return new AuthResult { Errors = new[] { "Token hasn't expired yet" } };
+            }
+            var jti = validatedToken.Claims.Single(t => t.Type == JwtRegisteredClaimNames.Jti).Value;
 
-        private AuthResult GenerateAuthResult(IdentityUser user)
+            var storedRefreshToken = await _dbContext.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
+            if (storedRefreshToken == null)
+            {
+                return new AuthResult { Errors = new[] { "Token doesn't exist" } };
+            }
+            if (DateTime.UtcNow> storedRefreshToken.ExpiryDate)
+            {
+                return new AuthResult { Errors = new[] { "Token has already expired" } };
+            }
+            if (storedRefreshToken.IsInvalid)
+            {
+                return new AuthResult { Errors = new[] { "Token has already expired" } };
+            }
+            if (storedRefreshToken.IsUsed)
+            {
+                return new AuthResult { Errors = new[] { "Token has already been used" } };
+            }
+            if (storedRefreshToken.JwtId != jti)
+            {
+                return new AuthResult { Errors = new[] { "Token doesn't match this JWT" } };
+            }
+
+            storedRefreshToken.IsUsed = true;
+            _dbContext.RefreshTokens.Update(storedRefreshToken);
+            await _dbContext.SaveChangesAsync();
+
+            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(t => t.Type == "id").Value);
+            return await GenerateAuthResultAsync(user);
+        }
+        private ClaimsPrincipal GetClaimsPrincipal(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validatedToken);
+
+                if (!IsJwtWithValidSecurityAlgorithm(validatedToken))
+                {
+                    return null;
+                }
+                return principal;
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
+
+        private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
+        {
+            return (validatedToken is JwtSecurityToken jwtSecurityToken)
+                && jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+        }
+        private async Task<AuthResult> GenerateAuthResultAsync(IdentityUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
@@ -120,14 +190,25 @@ namespace Infrastructure.Repositories
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
+            var refreshToken = new RefreshToken()
+            {
+                JwtId = token.Id,
+                Token = Guid.NewGuid().ToString(),
+                UserId = user.Id,
+                CreatedDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddMonths(6),
+            };
+            await _dbContext.RefreshTokens.AddAsync(refreshToken);
+            await _dbContext.SaveChangesAsync();
 
             return new AuthResult
             {
                 IsSuccessful = true,
-                Token = tokenHandler.WriteToken(token)
+                Token = tokenHandler.WriteToken(token),
+                RefreshToken = refreshToken.Token
             };
         }
 
-
+    
     }
 }

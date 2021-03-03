@@ -28,5 +28,10 @@ namespace Core.Services
         {
             return _repository.CheckUserOwnsArticle(articleId, userId);
         }
+
+        public Task<AuthResult> RefreshTokenAsync(string token, string refreshToken)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
