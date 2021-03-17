@@ -24,14 +24,11 @@ namespace Api.Controllers.V1
     public class ArticlesController : Controller
     {
         private IArticleService _service;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly HttpContext _context;
 
 
-        public ArticlesController(IArticleService service, UserManager<IdentityUser> userManager)
+        public ArticlesController(IArticleService service)
         {
             _service = service;
-            _userManager = userManager;
         }
         [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Articles", Type = typeof(IEnumerable<ArticleResource>))]
