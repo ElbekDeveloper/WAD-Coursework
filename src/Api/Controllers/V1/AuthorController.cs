@@ -4,12 +4,15 @@ using Core.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+
 namespace Api.Controllers.V1
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route(ApiRoutes.Generic)]
     public class AuthorController:Controller
@@ -22,54 +25,20 @@ namespace Api.Controllers.V1
         }
 
         [HttpGet]
+        [Route("GetAll")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Authors", Type = typeof(IEnumerable<AuthorResource>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<IEnumerable<AuthorResource>>> GetAuthors(CancellationToken cancellationToken)
         {
-            return Ok(await _service.GetAuthors());
+            return Ok(await _service.GetAuthors(cancellationToken));
         }
-
-
-
-        [HttpPost]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Add Author", Type = typeof(AuthorResource))]
+        [HttpGet]
+        [Route("CountAll")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Number of Authors", Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<AuthorResource>> AddAuthor([FromBody] AddAuthorResource model, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAuthorsCount(CancellationToken cancellationToken)
         {
-            return Ok(await _service.AddAuthor(model, cancellationToken));
+            return Ok(await _service.CountAuthors(cancellationToken));
         }
-
-        [HttpDelete]
-        [Route("{id}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Author Deleted", Type = typeof(AuthorResource))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<AuthorResource>> DeleteAuthor([FromRoute] int id, CancellationToken cancellationToken)
-        {
-            return Ok(await _service.DeleteAuthor(id, cancellationToken));
-        }
-
-        [HttpGet("{id:int}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Get Author", Type = typeof(AuthorResource))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<AuthorResource>> GetAuthor([FromRoute] int id, CancellationToken cancellationToken)
-        {
-            var result = await _service.GetAuthor(id, cancellationToken);
-            if (result is null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-
-        [HttpPut]
-        [Route("{id}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Author Updated ", Type = typeof(AuthorResource))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<AuthorResource>> UpdateAuthor([FromRoute][Required] int id, [FromBody][Required] AddAuthorResource model, CancellationToken cancellationToken)
-        {
-            return Ok(await _service.UpdateAuthor(id, model, cancellationToken));
-        }
-
     }
 }
