@@ -2,6 +2,7 @@
 using Core.Repositories;
 using Core.Services;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,7 +16,7 @@ namespace Api.Installers
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IAuthorService, AuthorService>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddTransient<IAuthorRepository, AuthorRepository>();
+            services.AddTransient<IAuthorRepository<IdentityUser>, AuthorRepository>();
             services.AddTransient<IArticleRepository, ArticleRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IIdentityService, IdentityService>();

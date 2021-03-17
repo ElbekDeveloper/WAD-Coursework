@@ -7,10 +7,9 @@ namespace Core.Interfaces
 {
     public interface IAuthorService
     {
-        Task<IEnumerable<AuthorResource>> GetAuthors();
-        Task<AuthorResource> AddAuthor(AddAuthorResource authorResource, CancellationToken cancellationToken = default);
-        Task<AuthorResource> DeleteAuthor(int id, CancellationToken cancellationToken = default);
-        Task<AuthorResource> GetAuthor(int id, CancellationToken cancellationToken = default);
-        Task<AuthorResource> UpdateAuthor(int id, AddAuthorResource authorResource, CancellationToken cancellationToken = default);
+        Task<IEnumerable<AuthorResource>> GetAuthors(CancellationToken cancellationToken = default);
+       
+        Task<AuthorResource> DeleteAuthor(string id, CancellationToken cancellationToken = default);
+        Task<int> CountAuthors(CancellationToken cancellationToken = default);
     }
 }
