@@ -10,34 +10,34 @@ using System.Threading.Tasks;
 namespace Core.Services
 {
 
-    public class AuthorService : IAuthorService
+public class AuthorService : IAuthorService
+{
+    private IAuthorRepository<IdentityUser> _repository;
+    private readonly IMapper _mapper;
+
+
+    public AuthorService(IAuthorRepository<IdentityUser> repository, IMapper mapper)
     {
-        private IAuthorRepository<IdentityUser> _repository;
-        private readonly IMapper _mapper;
-
-
-        public AuthorService(IAuthorRepository<IdentityUser> repository, IMapper mapper)
-        {
-            _repository = repository;
-            _mapper = mapper;
-        }
-
-        
-        public async Task<AuthorResource> DeleteAuthor(string id, CancellationToken cancellationToken = default)
-        {
-           var deletedAuthor = await _repository.DeleteAuthorAsync(id, cancellationToken);
-            return _mapper.Map<AuthorResource>(deletedAuthor);
-        }
-
-        public async Task<IEnumerable<AuthorResource>> GetAuthors(CancellationToken cancellationToken = default)
-        {
-            var authors = await _repository.GetAuthorsAsync();
-            return _mapper.Map<IEnumerable<IdentityUser>, IEnumerable<AuthorResource>>(authors);
-        }
-
-        public async Task<int> CountAuthors(CancellationToken cancellationToken = default)
-        {
-            return await _repository.CountAuthorsAsync(cancellationToken);
-        }
+        _repository = repository;
+        _mapper = mapper;
     }
+
+
+    public async Task<AuthorResource> DeleteAuthor(string id, CancellationToken cancellationToken = default)
+    {
+        var deletedAuthor = await _repository.DeleteAuthorAsync(id, cancellationToken);
+        return _mapper.Map<AuthorResource>(deletedAuthor);
+    }
+
+    public async Task<IEnumerable<AuthorResource>> GetAuthors(CancellationToken cancellationToken = default)
+    {
+        var authors = await _repository.GetAuthorsAsync();
+        return _mapper.Map<IEnumerable<IdentityUser>, IEnumerable<AuthorResource>>(authors);
+    }
+
+    public async Task<int> CountAuthors(CancellationToken cancellationToken = default)
+    {
+        return await _repository.CountAuthorsAsync(cancellationToken);
+    }
+}
 }
