@@ -18,71 +18,71 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers.V1
 {
-    [ApiController]
-    [Route(ApiRoutes.Generic)]
-    public class ArticlesController : Controller
+[ApiController]
+[Route(ApiRoutes.Generic)]
+public class ArticlesController : Controller
+{
+    private IArticleService _service;
+
+    public ArticlesController(IArticleService service)
     {
-        private IArticleService _service;
-
-        public ArticlesController(IArticleService service)
-        {
-            _service = service;
-        }
-        [HttpGet]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Articles", Type = typeof(IEnumerable<ArticleResource>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<IEnumerable<ArticleResource>>> GetArticles(CancellationToken cancellationToken)
-        {
-            return Ok(await _service.GetArticles());
-        }
-
-
-        [HttpGet("{id:int}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Get Article", Type = typeof(ArticleResource))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<ArticleResource>> GetArticle([FromRoute] int id, CancellationToken cancellationToken)
-        {
-            var result = await _service.GetArticle(id, cancellationToken);
-            if (result is null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-
-        [HttpPost]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Add Article", Type = typeof(ArticleResource))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
-        {
-            //The method should be moved to infrasturcture layer. 
-            //Cz the core should not know what type of auth we are using to verify users 
-            var userId = UserExtension.GetUserId(HttpContext);
-            
-            return Ok(await _service.AddArticle(userId, model, cancellationToken));
-        }
-
-        [HttpPut]
-        [Route("{id}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Article Updated ", Type = typeof(ArticleResource))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<ArticleResource>> UpdateArticle([FromRoute][Required] int id,[FromBody][Required] AddArticleResource model, CancellationToken cancellationToken)
-        {
-            return Ok(await _service.UpdateArticle(id, model, cancellationToken));
-        }
-
-        [HttpDelete]
-        [Route("{id}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Description = "Article Deleted", Type = typeof(ArticleResource))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<ArticleResource>> DeleteArticle([FromRoute] int id, CancellationToken cancellationToken)
-        {
-            return Ok(await _service.DeleteArticle(id, cancellationToken));
-        }
-
+        _service = service;
     }
+    [HttpGet]
+    [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Articles", Type = typeof(IEnumerable<ArticleResource>))]
+    [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+    public async Task<ActionResult<IEnumerable<ArticleResource>>> GetArticles(CancellationToken cancellationToken)
+    {
+        return Ok(await _service.GetArticles());
+    }
+
+
+    [HttpGet("{id:int}")]
+    [SwaggerResponse((int)HttpStatusCode.OK, Description = "Get Article", Type = typeof(ArticleResource))]
+    [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<ActionResult<ArticleResource>> GetArticle([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        var result = await _service.GetArticle(id, cancellationToken);
+        if (result is null)
+        {
+            return NotFound();
+        }
+        return Ok(result);
+    }
+
+
+    [HttpPost]
+    [SwaggerResponse((int)HttpStatusCode.OK, Description = "Add Article", Type = typeof(ArticleResource))]
+    [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
+    {
+        //The method should be moved to infrasturcture layer.
+        //Cz the core should not know what type of auth we are using to verify users
+        var userId = UserExtension.GetUserId(HttpContext);
+
+        return Ok(await _service.AddArticle(userId, model, cancellationToken));
+    }
+
+    [HttpPut]
+    [Route("{id}")]
+    [SwaggerResponse((int)HttpStatusCode.OK, Description = "Article Updated ", Type = typeof(ArticleResource))]
+    [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+    public async Task<ActionResult<ArticleResource>> UpdateArticle([FromRoute][Required] int id,[FromBody][Required] AddArticleResource model, CancellationToken cancellationToken)
+    {
+        return Ok(await _service.UpdateArticle(id, model, cancellationToken));
+    }
+
+    [HttpDelete]
+    [Route("{id}")]
+    [SwaggerResponse((int)HttpStatusCode.OK, Description = "Article Deleted", Type = typeof(ArticleResource))]
+    [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<ActionResult<ArticleResource>> DeleteArticle([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        return Ok(await _service.DeleteArticle(id, cancellationToken));
+    }
+
+}
 }
