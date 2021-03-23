@@ -16,17 +16,19 @@
     <div class="container" ng-controller="ArticlesController">
         <div class="row">
             <div class="col-md-10 col-lg-8">
-                <div class="post-preview" ng-repeat="article in articles | orderBy: article.createdDate"><a href="#">
+                <div class="post-preview" ng-repeat="article in articles"><a href="#">
                         <h2 class="post-title">{{article.title}}</h2>
-                        <p class="post-subtitle">{{article.body}}</p>
+                        <p class="post-subtitle">{{article.body | limitTo : 60}}...</p>
                     </a>
                     <p class="post-meta">Posted by&nbsp; {{article.author.name}} on
-                        {{article.createdDate}}</p>
+                        {{article.createdDate | date}}</p>
                 </div>
 
             </div>
         </div>
     </div>
+
+
     <footer ng-include="'./Shared/_footer.html'">
 
     </footer>

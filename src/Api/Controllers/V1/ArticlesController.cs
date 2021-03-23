@@ -18,13 +18,11 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers.V1
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route(ApiRoutes.Generic)]
     public class ArticlesController : Controller
     {
         private IArticleService _service;
-
 
         public ArticlesController(IArticleService service)
         {
@@ -42,6 +40,7 @@ namespace Api.Controllers.V1
         [HttpGet("{id:int}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Get Article", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ArticleResource>> GetArticle([FromRoute] int id, CancellationToken cancellationToken)
         {
             var result = await _service.GetArticle(id, cancellationToken);
@@ -56,6 +55,7 @@ namespace Api.Controllers.V1
         [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Add Article", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
         {
             //The method should be moved to infrasturcture layer. 
@@ -78,6 +78,7 @@ namespace Api.Controllers.V1
         [Route("{id}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Article Deleted", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ArticleResource>> DeleteArticle([FromRoute] int id, CancellationToken cancellationToken)
         {
             return Ok(await _service.DeleteArticle(id, cancellationToken));
