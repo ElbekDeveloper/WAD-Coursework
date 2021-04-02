@@ -1,0 +1,18 @@
+<header class="masthead" style="background-image:url('../assets/img/about-bg.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-lg-8 mx-auto">
+                <div class="site-heading" style="padding:70px 0">
+                    <h2>{{article.title}}</h2>
+                    <span class="subheading">{{article.author.name}}
+                        {{article.createdDate | date}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <p>{{article.body}}</p>
+</div>

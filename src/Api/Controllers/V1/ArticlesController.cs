@@ -40,7 +40,7 @@ namespace Api.Controllers.V1
         [HttpGet("{id:int}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Get Article", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<ActionResult<ArticleResource>> GetArticle([FromRoute] int id, CancellationToken cancellationToken)
         {
             var result = await _service.GetArticle(id, cancellationToken);
