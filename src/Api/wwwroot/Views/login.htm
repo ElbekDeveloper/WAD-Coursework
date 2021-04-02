@@ -1,0 +1,41 @@
+<!-- Bootstrap core CSS -->
+<link href="../assets/bootstrap/css/bootstrapsignin.min.css" rel="stylesheet">
+
+<style>
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  nav {
+    background: linear-gradient(120deg, #0cf9e5, #597edb)
+  }
+
+  @media (min-width: 768px) {
+
+
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+</style>
+<!-- Custom styles for this template -->
+<link href="../Styles/signin.css" rel="stylesheet">
+</head>
+
+<main class="form-signin">
+  <form ng-submit="login()">
+    <!-- <img class="mb-4" src="../assets/img/logo.jpg" alt="logo" width="150" height="150"> -->
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    <label for="inputEmail" class="visually-hidden">Email address</label>
+    <input ng-model="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required
+      autofocus>
+    <label for="inputPassword" class="visually-hidden">Password</label>
+    <input ng-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+  </form>
+</main>
