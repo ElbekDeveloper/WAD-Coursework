@@ -12,9 +12,7 @@
   "paths": {
     "/api/v1/Articles": {
       "get": {
-        "tags": [
-          "Articles"
-        ],
+        "tags": ["Articles"],
         "responses": {
           "200": {
             "description": "Success",
@@ -51,9 +49,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Articles"
-        ],
+        "tags": ["Articles"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -102,9 +98,7 @@
     },
     "/api/v1/Articles/{id}": {
       "get": {
-        "tags": [
-          "Articles"
-        ],
+        "tags": ["Articles"],
         "parameters": [
           {
             "name": "id",
@@ -143,9 +137,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Articles"
-        ],
+        "tags": ["Articles"],
         "parameters": [
           {
             "name": "id",
@@ -204,9 +196,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Articles"
-        ],
+        "tags": ["Articles"],
         "parameters": [
           {
             "name": "id",
@@ -247,9 +237,7 @@
     },
     "/api/v1/Author/GetAll": {
       "get": {
-        "tags": [
-          "Author"
-        ],
+        "tags": ["Author"],
         "responses": {
           "200": {
             "description": "Success",
@@ -288,9 +276,7 @@
     },
     "/api/v1/Author/CountAll": {
       "get": {
-        "tags": [
-          "Author"
-        ],
+        "tags": ["Author"],
         "responses": {
           "200": {
             "description": "Success",
@@ -323,9 +309,7 @@
     },
     "/api/v1/Identity/Register": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -354,9 +338,7 @@
     },
     "/api/v1/Identity/Login": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -385,9 +367,7 @@
     },
     "/api/v1/Identity/Refresh": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -418,10 +398,7 @@
   "components": {
     "schemas": {
       "AddArticleResource": {
-        "required": [
-          "body",
-          "title"
-        ],
+        "required": ["body", "title"],
         "type": "object",
         "properties": {
           "title": {
@@ -435,10 +412,7 @@
         "additionalProperties": false
       },
       "ArticleResource": {
-        "required": [
-          "body",
-          "title"
-        ],
+        "required": ["body", "title"],
         "type": "object",
         "properties": {
           "id": {
