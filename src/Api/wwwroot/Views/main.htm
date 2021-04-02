@@ -1,0 +1,26 @@
+<header class="masthead" style="background-image:url('assets/img/home-bg.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-lg-8 mx-auto">
+                <div class="site-heading">
+                    <h1>here is your pen</h1><span class="subheading">write something...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-lg-8">
+            <div class="post-preview" ng-repeat="article in articles"><a href="/index.html#!/articles/{{article.id}}">
+                    <h2 class="post-title">{{article.title}}</h2>
+                    <p class="post-subtitle">{{article.body | limitTo : 60}}...</p>
+                </a>
+                <p class="post-meta">Posted by&nbsp; {{article.author.name}} on
+                    {{article.createdDate | date}}</p>
+            </div>
+
+        </div>
+    </div>
+</div>
