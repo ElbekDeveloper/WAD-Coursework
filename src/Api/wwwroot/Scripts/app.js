@@ -1,5 +1,5 @@
-var penApp = angular.module('penApp', ["ngRoute"]);
-penApp.config(function ($routeProvider) {
+var penApp = angular.module('penApp', ["ngRoute", "angular-jwt"]);
+penApp.config(function ($routeProvider,$httpProvider, jwtOptionsProvider) {
   $routeProvider
     .when("/home", {
       templateUrl: "../Views/main.htm",
@@ -20,10 +20,23 @@ penApp.config(function ($routeProvider) {
       templateUrl: "../Views/articleDetails.htm",
       controller: "ArticleDetailsController"
     })
+    .when("/login", {
+      templateUrl: "../Views/login.htm",
+      controller: "LoginController"
+    })
     .otherwise({
       redirectTo: "/404"
     });
+  //route config ends here
+   // Please note we're annotating the function so that the $injector works when the file is minified
+    jwtOptionsProvider.config({
+      tokenGetter: ['', function() {
+        return localStorage.getItem('token');
+      }]
+    });
+    //$httpProvider.interceptors.push('jwtInterceptor');
 });
+
 
 penApp.controller('ArticlesController', function ($scope, $http, $log) {
   
@@ -31,9 +44,9 @@ penApp.controller('ArticlesController', function ($scope, $http, $log) {
 
     method: 'GET',
 
-    url: '/api/v1/Articles',
+    skipAuthorization: true,
 
-    data: 'articles'
+    url: '/api/v1/Articles',
 
 }).then(function success(response) {
   // this function will be called when the request is success
@@ -50,7 +63,9 @@ penApp.controller('ArticlesController', function ($scope, $http, $log) {
 penApp.controller('ArticleDetailsController', function ($scope, $http, $log, $routeParams) {
     $http({
 
-    method: 'GET',
+      method: 'GET',
+
+      skipAuthorization: true,
 
     url: '/api/v1/Articles/' + $routeParams.id,
 
@@ -66,4 +81,31 @@ penApp.controller('ArticleDetailsController', function ($scope, $http, $log, $ro
     $scope.error = response.error;
     $log.log($scope.error);
   });
+});
+
+penApp.controller('LoginController', function ($scope, $http, $log, $routeParams, jwtHelper) {
+  $scope.email = '';
+  $scope.password = '';
+  $scope.login = function () {
+    $http({
+
+    method: 'POST',
+
+    url: '/api/v1/Identity/Login',
+
+    data: {
+    "email": $scope.email,
+    "password": $scope.password
+}
+
+}).then(function success(response) {
+  // this function will be called when the request is success
+  $scope.userData = response.data;
+  }, function error(response) { 
+    // this function will be called when the request returned error status
+    $scope.error = response.error;
+    $log.log($scope.error);
+  });
+
+  }
 });
