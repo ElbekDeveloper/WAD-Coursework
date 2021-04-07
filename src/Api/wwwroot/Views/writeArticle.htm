@@ -1,0 +1,38 @@
+<header class="masthead" style="background-image:url('assets/img/write.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-lg-8 mx-auto">
+                <div class="site-heading">
+                    <h1>Write</h1><span class="subheading">You are so smart!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-lg-8 mx-auto">
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore eligendi neque odit repellendus
+            </p>
+            <form id="articleForm" name="sentMessage" ng-submit="write()">
+                <div class="control-group">
+                    <div class="form-group floating-label-form-group controls"><label>Title</label>
+                        <input ng-model="title" class="form-control" type="text" id="title" required=""
+                            placeholder="Title"><small class="form-text text-danger help-block"></small>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="form-group floating-label-form-group controls mb-3"><label>Body of your
+                            article</label><textarea ng-model="body" class="form-control" id="body"
+                            data-validation-required-message="Please, write the body of an article." required=""
+                            placeholder="Body of your article" rows="5"></textarea><small
+                            class="form-text text-danger help-block"></small></div>
+                </div>
+                <div id="success"></div>
+                <div class="form-group"><button class="btn btn-primary" id="sendArticleButton"
+                        type="submit">Send</button></div>
+            </form>
+        </div>
+    </div>
+</div>
