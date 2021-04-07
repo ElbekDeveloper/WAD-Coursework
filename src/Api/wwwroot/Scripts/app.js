@@ -1,5 +1,35 @@
-var penApp = angular.module('penApp', ["ngRoute", "angular-jwt"]);
-penApp.config(function ($routeProvider,$httpProvider, jwtOptionsProvider) {
+var penApp = angular.module('penApp', ["ngRoute", "angular-jwt", "ngCookies"]);
+penApp.factory('customAuthManager', function ($rootScope) {
+  
+  return {
+    CheckAuthState: function(){
+      return localStorage.getItem("id_token") !== null;
+    }
+  }
+});
+
+var requireAuthentication = function () {
+    return {
+        load: function ($q, $location) {
+            console.log('Can user access route?');
+            var deferred = $q.defer();
+        deferred.resolve();
+        console.log(localStorage.getItem("id_token") !== null)
+            if (localStorage.getItem("id_token") !== null) { // fire $routeChangeSuccess
+                console.log('Yes they can!');
+                return deferred.promise;
+            } else { // fire $routeChangeError
+                console.log('No they cant!');
+                $location.path('/login');
+
+                // I don't think this is still necessary:
+                return $q.reject("'/login'");
+            }
+        }
+    };
+}
+penApp.config(function ($routeProvider, $httpProvider, jwtOptionsProvider) {
+
   $routeProvider
     .when("/home", {
       templateUrl: "../Views/main.htm",
@@ -24,22 +54,43 @@ penApp.config(function ($routeProvider,$httpProvider, jwtOptionsProvider) {
       templateUrl: "../Views/login.htm",
       controller: "LoginController"
     })
+    .when("/write", {
+      templateUrl: "../Views/writeArticle.htm",
+      controller: "WriteArticleController",
+      resolve: requireAuthentication()
+    })
     .otherwise({
       redirectTo: "/404"
     });
   //route config ends here
    // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
-      tokenGetter: ['', function() {
-        return localStorage.getItem('token');
-      }]
+      tokenGetter: ['options', function (options) {
+        console.log(options);
+        return localStorage.getItem('id_token');
+      }],
+      unauthenticatedRedirectPath: '/login'
     });
-    //$httpProvider.interceptors.push('jwtInterceptor');
+
+    $httpProvider.interceptors.push('jwtInterceptor');
 });
+penApp.run(function (authManager, $rootScope){
+  authManager.redirectWhenUnauthenticated();
+  $rootScope.isAuthenticated = localStorage.getItem("id_token") !== null;
+})
+penApp.controller('NavController', function ($rootScope,$scope, $log, customAuthManager) {
+  $scope.isAuthenticated = $rootScope.isAuthenticated;
+  $log.log($scope.isAuthenticated);
+  $scope.logout = function () {
+    $log.log("Logged out...")
+    localStorage.clear();
+    $rootScope.isAuthenticated = false;
+    $scope.isAuthenticated = false;
+  }
+})
+penApp.controller('ArticlesController', function ($scope, $http, $log, customAuthManager) {
+  $log.log(customAuthManager.CheckAuthState());
 
-
-penApp.controller('ArticlesController', function ($scope, $http, $log) {
-  
   $http({
 
     method: 'GET',
@@ -65,16 +116,13 @@ penApp.controller('ArticleDetailsController', function ($scope, $http, $log, $ro
 
       method: 'GET',
 
-      skipAuthorization: true,
+      url: '/api/v1/Articles/' + $routeParams.id,
 
-    url: '/api/v1/Articles/' + $routeParams.id,
-
-    data: 'article'
+      data: 'article'
 
 }).then(function success(response) {
   // this function will be called when the request is success
   $scope.article = response.data;
-  $log.log($scope.article);
 
   }, function error(response) { 
     // this function will be called when the request returned error status
@@ -83,7 +131,7 @@ penApp.controller('ArticleDetailsController', function ($scope, $http, $log, $ro
   });
 });
 
-penApp.controller('LoginController', function ($scope, $http, $log, $routeParams, jwtHelper) {
+penApp.controller('LoginController', function ($rootScope,$scope, $http, $log, $routeParams, jwtHelper, $location) {
   $scope.email = '';
   $scope.password = '';
   $scope.login = function () {
@@ -101,11 +149,47 @@ penApp.controller('LoginController', function ($scope, $http, $log, $routeParams
 }).then(function success(response) {
   // this function will be called when the request is success
   $scope.userData = response.data;
+  $log.log('Logged in');
+  localStorage.setItem('id_token', $scope.userData.token);
+  $rootScope.isAuthenticated = true;
+  $location.path("/home");
+  
   }, function error(response) { 
     // this function will be called when the request returned error status
     $scope.error = response.error;
     $log.log($scope.error);
   });
 
-  }
+  } 
+});
+
+penApp.controller('WriteArticleController', function ($scope, $http, $log, $routeParams, jwtHelper, $location) {
+  $scope.title = '';
+  $scope.body = '';
+  $scope.write = function () {
+    $http({
+
+    method: 'POST',
+
+    url: '/api/v1/Articles',
+
+    data: {
+    "title": $scope.title,
+    "body": $scope.body
+}
+
+}).then(function success(response) {
+  // this function will be called when the request is success
+  
+  $log.log('new article saved');
+  
+  $location.path("/articles/" + response.data.id);
+
+  }, function error(response) { 
+    // this function will be called when the request returned error status
+    $scope.error = response.error;
+    $log.log($scope.error);
+  });
+
+  } 
 });
