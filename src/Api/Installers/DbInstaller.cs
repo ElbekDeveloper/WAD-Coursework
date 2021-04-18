@@ -14,6 +14,7 @@ namespace Api.Installers
                             options.UseSqlServer(
                                 configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
+                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
          }
     }

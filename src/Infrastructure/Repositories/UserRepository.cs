@@ -1,4 +1,5 @@
 ﻿using Core.Auth.Models;
+using Core.Auth.Roles;
 using Core.Auth.Settings;
 using Core.Repositories;
 using Domain.Models;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -22,12 +24,14 @@ namespace Infrastructure.Repositories
         private readonly JwtSettings _jwtSettings;
         private readonly ApplicationDbContext _dbContext;
         private TokenValidationParameters _tokenValidationParameters;
-        public UserRepository(UserManager<IdentityUser> userManager, JwtSettings jwtSettings, ApplicationDbContext dbContext, TokenValidationParameters tokenValidationParameters)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public UserRepository(UserManager<IdentityUser> userManager, JwtSettings jwtSettings, ApplicationDbContext dbContext, TokenValidationParameters tokenValidationParameters, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _jwtSettings = jwtSettings;
             _dbContext = dbContext;
             _tokenValidationParameters = tokenValidationParameters;
+            _roleManager = roleManager;
         }
         public async Task<bool> CheckUserOwnsArticle(int articleId, string userId)
         {
@@ -72,6 +76,16 @@ namespace Infrastructure.Repositories
                     Errors = createdUser.Errors.Select(x => x.Description)
                 };
             }
+            bool writerRoleExists = await _roleManager.RoleExistsAsync(Roles.CanWriteArticle);
+
+            if (writerRoleExists == false)
+            {
+                var role = new IdentityRole();
+                role.Name = Roles.CanWriteArticle;
+                await _roleManager.CreateAsync(role);
+            }
+            //At this point we successfully created users and roles
+            var result = await _userManager.AddToRoleAsync(newUser,Roles.CanWriteArticle);
             return await GenerateAuthResultAsync(newUser); ;
         }
 
@@ -173,21 +187,25 @@ namespace Infrastructure.Repositories
         }
         private async Task<AuthResult> GenerateAuthResultAsync(IdentityUser user)
         {
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Role, "CanWriteArticle"));
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                        new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.Aud, _jwtSettings.Audience),
-                        new Claim(JwtRegisteredClaimNames.Iss, _jwtSettings.Issuer),
-                        new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                        new Claim("id", user.Id)
-                    }),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Aud, _jwtSettings.Audience),
+                    new Claim(JwtRegisteredClaimNames.Iss, _jwtSettings.Issuer),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim("id", user.Id), 
+                    new Claim(ClaimTypes.Role, Roles.CanWriteArticle)
+                }),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var refreshToken = new RefreshToken()
