@@ -30,6 +30,8 @@ namespace Infrastructure.Repositories
             return articles;
         }
 
+       
+
         public override async Task<Article> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var article = await _dbContext.Articles

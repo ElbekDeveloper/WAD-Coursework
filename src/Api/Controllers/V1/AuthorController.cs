@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Core.Auth.Extensions;
 
 namespace Api.Controllers.V1
 {
@@ -23,7 +24,17 @@ namespace Api.Controllers.V1
         {
             _service = service;
         }
+        [HttpGet]
+        [Route("GetArticles")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Articles of User", Type = typeof(IEnumerable<ArticleResource>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult<IEnumerable<ArticleResource>>> GetArticlesByUser(CancellationToken cancellationToken)
+        {
+            var userId = UserExtension.GetUserId(HttpContext);
 
+            return Ok(await _service.GetArticlesByUserAsync(userId, cancellationToken));
+        }
         [HttpGet]
         [Route("GetAll")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Authors", Type = typeof(IEnumerable<AuthorResource>))]

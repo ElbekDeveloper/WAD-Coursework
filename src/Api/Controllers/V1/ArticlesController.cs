@@ -58,8 +58,6 @@ namespace Api.Controllers.V1
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
         {
-            //The method should be moved to infrasturcture layer. 
-            //Cz the core should not know what type of auth we are using to verify users 
             var userId = UserExtension.GetUserId(HttpContext);
             
             return Ok(await _service.AddArticle(userId, model, cancellationToken));

@@ -39,5 +39,11 @@ namespace Core.Services
         {
             return await _repository.CountAuthorsAsync(cancellationToken);
         }
+
+        public async Task<IEnumerable<ArticleResource>> GetArticlesByUserAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var articles = await _repository.GetArticlesByUserAsync(userId, cancellationToken);
+            return _mapper.Map<IEnumerable<ArticleResource>>(articles);
+        }
     }
 }
