@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Core.Auth.Extensions;
+using Core.Auth.Roles;
 
 namespace Api.Controllers.V1
 {
@@ -37,6 +38,7 @@ namespace Api.Controllers.V1
         }
         [HttpGet]
         [Route("GetAll")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CanManageUsers")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "All Authors", Type = typeof(IEnumerable<AuthorResource>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<IEnumerable<AuthorResource>>> GetAuthors(CancellationToken cancellationToken)
@@ -45,6 +47,7 @@ namespace Api.Controllers.V1
         }
         [HttpGet]
         [Route("CountAll")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CanManageUsers")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Number of Authors", Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAuthorsCount(CancellationToken cancellationToken)
