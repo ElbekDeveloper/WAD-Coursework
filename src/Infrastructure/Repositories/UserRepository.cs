@@ -84,6 +84,24 @@ namespace Infrastructure.Repositories
                 role.Name = Roles.CanWriteArticle;
                 await _roleManager.CreateAsync(role);
             }
+            //Uncomment the section to register as manager
+            //DISCLAIMER: The section will be deleted upon 
+            //releasing the website into production
+
+            #region Create Manager Role
+            //bool managerRoleExists = await _roleManager.RoleExistsAsync(Roles.CanManageUsers);
+
+            //if (managerRoleExists == false)
+            //{
+            //    var role = new IdentityRole();
+            //    role.Name = Roles.CanManageUsers;
+            //    await _roleManager.CreateAsync(role);
+            //}
+
+            ////Append manager role to registered user
+            //await _userManager.AddToRoleAsync(newUser, Roles.CanManageUsers);
+            #endregion
+
             //At this point we successfully created users and roles
             var result = await _userManager.AddToRoleAsync(newUser,Roles.CanWriteArticle);
             return await GenerateAuthResultAsync(newUser); ;
@@ -200,7 +218,11 @@ namespace Infrastructure.Repositories
                     new Claim(JwtRegisteredClaimNames.Aud, _jwtSettings.Audience),
                     new Claim(JwtRegisteredClaimNames.Iss, _jwtSettings.Issuer),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("id", user.Id), 
+                    new Claim("id", user.Id),
+                    //Uncomment the section to register as manager
+                    //DISCLAIMER: The section will be deleted upon 
+                    //releasing the website into production
+                    //new Claim(ClaimTypes.Role, Roles.CanManageUsers),
                     new Claim(ClaimTypes.Role, Roles.CanWriteArticle)
                 }),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
