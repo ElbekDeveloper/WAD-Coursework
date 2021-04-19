@@ -59,6 +59,15 @@ penApp.config(function ($routeProvider, $httpProvider, jwtOptionsProvider) {
       controller: "WriteArticleController",
       resolve: requireAuthentication()
     })
+    .when("/manage", {
+      templateUrl: "../Views/manageUsers.htm",
+      controller: "ManageUsersController",
+      resolve: requireAuthentication()
+    })
+    .when("/profile", {
+      templateUrl: "../Views/profile.htm",
+      controller: "ProfileController"
+    })
     .otherwise({
       redirectTo: "/404"
     });
@@ -74,19 +83,27 @@ penApp.config(function ($routeProvider, $httpProvider, jwtOptionsProvider) {
 
     $httpProvider.interceptors.push('jwtInterceptor');
 });
-penApp.run(function (authManager, $rootScope){
+penApp.run(function (authManager, $rootScope) {
   authManager.redirectWhenUnauthenticated();
   $rootScope.isAuthenticated = localStorage.getItem("id_token") !== null;
-})
-penApp.controller('NavController', function ($rootScope,$scope, $log, customAuthManager) {
+});
+penApp.controller('NavController', function ($rootScope,$scope, $log, jwtHelper) {
   $scope.isAuthenticated = $rootScope.isAuthenticated;
-  $log.log($scope.isAuthenticated);
   $scope.logout = function () {
     $log.log("Logged out...")
     localStorage.clear();
     $rootScope.isAuthenticated = false;
     $scope.isAuthenticated = false;
+    $scope.CanWriteArticle = false;
+  };
+  if ($scope.isAuthenticated) {
+    var tokenPayLoad = jwtHelper.decodeToken(localStorage.getItem("id_token"));
+    $scope.CanWriteArticle = tokenPayLoad.role.includes("CanWriteArticle");
+    $scope.CanManageUsers = tokenPayLoad.role.includes("CanManageUsers");
+    $log.log("You can write article: " + $scope.CanWriteArticle);
+    $log.log("You can manage users: " + $scope.CanManageUsers);
   }
+ 
 })
 penApp.controller('ArticlesController', function ($scope, $http, $log, customAuthManager) {
   $log.log(customAuthManager.CheckAuthState());
@@ -98,6 +115,25 @@ penApp.controller('ArticlesController', function ($scope, $http, $log, customAut
     skipAuthorization: true,
 
     url: '/api/v1/Articles',
+
+}).then(function success(response) {
+  // this function will be called when the request is success
+  $scope.articles = response.data;
+  
+  }, function error(response) { 
+    // this function will be called when the request returned error status
+    $scope.error = response.error;
+    $log.log($scope.error);
+  });
+  
+});
+
+penApp.controller('ProfileController', function ($scope, $http, $log, customAuthManager) {
+  $http({
+
+    method: 'GET',
+
+    url: '/api/v1/Author/GetArticles',
 
 }).then(function success(response) {
   // this function will be called when the request is success
