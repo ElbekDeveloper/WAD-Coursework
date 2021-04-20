@@ -5,27 +5,25 @@
 </style>
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-10 col-lg-8">
-            <br><br><br>
-            <div ng-if="articles.length == 0">
-                <a class="nav-link" href="/index.html#!/write">Write
-                    Post</a>
-            </div>
-            <div class="post-preview d-flex" ng-repeat="article in articles">
-                <div class="p-2 flex-grow-1">
-                    <h2 class="post-title">{{article.title}}</h2>
-                    <p class="post-subtitle">{{article.body | limitTo : 60}}...</p>
-                </div>
-                <div class="p-2">
-                    <a class="btn btn-danger" href="#">
-                        <i class="fa fa-trash-o fa-lg"></i></a>
-                    <a class="btn btn-info" href="#">
-                        <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
-                    </a>
-                </div>
-            </div>
-
+    <br><br><br>
+    <div ng-if="articles.length == 0" class="text-center">
+        <h3 class="">Ooops! Looks like you haven't written anything yet!</h3>
+        <a class="" href="/index.html#!/write">Come on! Write something...</a>
+    </div>
+    <div class="row" ng-repeat="article in articles">
+        <div class="col-sm-9">
+            <h2 class="post-title">{{article.title}}</h2>
+            <p class="post-subtitle">{{article.body | limitTo : 60}}...</p>
+        </div>
+        <div class="col-sm-3">
+            <a class="btn btn-outline-danger" ng-click="delete(article.id)">
+                <i class="fa fa-trash-o fa-lg"></i></a>
+            <a class="btn btn-outline-info" href="/index.html#!/update/{{article.id}}">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </a>
+            <a class="btn btn-outline-success" href="/index.html#!/articles/{{article.id}}">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+            </a>
         </div>
     </div>
 </div>
