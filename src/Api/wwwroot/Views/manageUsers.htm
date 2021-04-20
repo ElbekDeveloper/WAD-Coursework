@@ -1,0 +1,21 @@
+<style>
+    nav {
+        background: linear-gradient(120deg, #0cf9e5, #597edb) !important;
+    }
+</style>
+<br>
+<br>
+<table class="container table table-hover">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody ng-repeat="user in users">
+        <tr>
+            <td>{{user.email}}</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>

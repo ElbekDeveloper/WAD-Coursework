@@ -6,7 +6,7 @@
                 <div class="site-heading" style="padding:70px 0">
                     <h2>{{article.title}}</h2>
                     <span class="subheading">{{article.author.name}}
-                        {{article.createdDate | date}}</span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -14,5 +14,9 @@
 </header>
 
 <div class="container">
+    <p class="text-secondary small"><span ng-hide="!article.updatedDate">Last
+            Updated on {{article.updatedDate | date}}</span>
+        <span ng-hide="article.updatedDate">Created on {{article.createdDate | date}}</span>
+    </p>
     <p>{{article.body}}</p>
 </div>
