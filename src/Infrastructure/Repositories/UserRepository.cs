@@ -85,8 +85,10 @@ namespace Infrastructure.Repositories
                 await _roleManager.CreateAsync(role);
             }
             //Uncomment the section to register as manager
-            //DISCLAIMER: The section will be deleted upon 
-            //releasing the website into production
+            //DISCLAIMER: The feature is under poor maintenance 
+            //Better not use now!
+            //INSTEAD: register as admin@pen.com with your own password
+            //After logging in the fronted shows some endpoints related to admin role
 
             #region Create Manager Role
             //bool managerRoleExists = await _roleManager.RoleExistsAsync(Roles.CanManageUsers);
@@ -220,8 +222,8 @@ namespace Infrastructure.Repositories
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim("id", user.Id),
                     //Uncomment the section to register as manager
-                    //DISCLAIMER: The section will be deleted upon 
-                    //releasing the website into production
+                    //DISCLAIMER: The feature is under poor maintenance 
+                    //Better not use now!
                     //new Claim(ClaimTypes.Role, Roles.CanManageUsers),
                     new Claim(ClaimTypes.Role, Roles.CanWriteArticle)
                 }),
