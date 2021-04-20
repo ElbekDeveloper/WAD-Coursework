@@ -4,7 +4,9 @@
         <div class="row">
             <div class="col-md-10 col-lg-8 mx-auto">
                 <div class="site-heading">
-                    <h1>here is your pen</h1><span class="subheading">write something...</span>
+                    <h3 class="display-3">Here is your pen!</h1><span class="subheading">Not that the story need be
+                            long,
+                            but it will take a long while to make it short.</span>
                 </div>
             </div>
         </div>
@@ -17,8 +19,12 @@
                     <h2 class="post-title">{{article.title}}</h2>
                     <p class="post-subtitle">{{article.body | limitTo : 60}}...</p>
                 </a>
-                <p class="post-meta">Posted by&nbsp; {{article.author.name}} on
-                    {{article.createdDate | date}}</p>
+                <p class="post-meta">
+                    <span ng-hide="!article.updatedDate">Updated by&nbsp; {{article.author.name}} on
+                        {{article.updatedDate | date}}</span>
+                    <span ng-hide="article.updatedDate">Posted by&nbsp; {{article.author.name}} on {{article.createdDate
+                        | date}}</span>
+                </p>
             </div>
 
         </div>
