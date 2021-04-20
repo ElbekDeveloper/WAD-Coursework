@@ -13,20 +13,18 @@ namespace Core.Services
     public class ArticleService : IArticleService
     {
         private IArticleRepository _articleRepository;
-        private IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public ArticleService(IArticleRepository repository,IUserRepository userRepository, IMapper mapper)
+        public ArticleService(IArticleRepository repository, IMapper mapper)
         {
-            _userRepository = userRepository;
             _articleRepository = repository;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<ArticleResource>> GetArticles()
         {
-            var article = await _articleRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<ArticleResource>>(article);
+            var articles = await _articleRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<ArticleResource>>(articles);
         }
 
         public async Task<ArticleResource> AddArticle(string userId, AddArticleResource addArticleResource, CancellationToken cancellationToken)
@@ -51,10 +49,11 @@ namespace Core.Services
             return _mapper.Map<ArticleResource>(article);
         }
 
-        public async Task<ArticleResource> UpdateArticle(int id,AddArticleResource articleResource, CancellationToken cancellationToken = default)
+        public async Task<ArticleResource> UpdateArticle(string userId, int id,AddArticleResource articleResource, CancellationToken cancellationToken = default)
         {
             var article = _mapper.Map<Article>(articleResource);
             article.Id = id;
+            article.AuthorId = userId;
             article.UpdatedDate = DateTime.UtcNow;
             await _articleRepository.UpdateAsync(article, cancellationToken);
             return await GetArticle(article.Id, cancellationToken);

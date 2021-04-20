@@ -1,0 +1,29 @@
+<style>
+    nav {
+        background: linear-gradient(120deg, #0cf9e5, #597edb) !important;
+    }
+</style>
+
+<div class="container">
+    <br><br><br>
+    <div ng-if="articles.length == 0" class="text-center">
+        <h3 class="">Ooops! Looks like you haven't written anything yet!</h3>
+        <a class="" href="/index.html#!/write">Come on! Write something...</a>
+    </div>
+    <div class="row" ng-repeat="article in articles">
+        <div class="col-sm-9">
+            <h2 class="post-title">{{article.title}}</h2>
+            <p class="post-subtitle">{{article.body | limitTo : 60}}...</p>
+        </div>
+        <div class="col-sm-3">
+            <a class="btn btn-outline-danger" ng-click="delete(article.id)">
+                <i class="fa fa-trash-o fa-lg"></i></a>
+            <a class="btn btn-outline-info" href="/index.html#!/update/{{article.id}}">
+                <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+            </a>
+            <a class="btn btn-outline-success" href="/index.html#!/articles/{{article.id}}">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+</div>

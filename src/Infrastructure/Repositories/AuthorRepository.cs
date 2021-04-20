@@ -1,8 +1,10 @@
 ﻿using Core.Repositories;
+using Domain.Models;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +40,15 @@ namespace Infrastructure.Repositories
             var authors = await _dbContext.Users
                                        .ToListAsync(cancellationToken);
             return authors.Count;
+        }
+        public async Task<IEnumerable<Article>> GetArticlesByUserAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var articles = await _dbContext.Articles
+                         .Include(a => a.Author)
+                         .Where(a => a.Author.Id == userId)
+                         .ToListAsync(cancellationToken);
 
+            return articles;
         }
     }
 }

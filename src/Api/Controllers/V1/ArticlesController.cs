@@ -1,5 +1,6 @@
 ﻿using Api.Contracts.V1;
 using Core.Auth.Extensions;
+using Core.Auth.Roles;
 using Core.Interfaces;
 using Core.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -55,11 +56,9 @@ namespace Api.Controllers.V1
         [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Add Article", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CanWriteArticle, CanManageUsers")]
         public async Task<ActionResult<ArticleResource>> AddArticle([FromBody]AddArticleResource model, CancellationToken cancellationToken)
         {
-            //The method should be moved to infrasturcture layer. 
-            //Cz the core should not know what type of auth we are using to verify users 
             var userId = UserExtension.GetUserId(HttpContext);
             
             return Ok(await _service.AddArticle(userId, model, cancellationToken));
@@ -69,16 +68,20 @@ namespace Api.Controllers.V1
         [Route("{id}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Article Updated ", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CanWriteArticle, CanManageUsers")]
+
         public async Task<ActionResult<ArticleResource>> UpdateArticle([FromRoute][Required] int id,[FromBody][Required] AddArticleResource model, CancellationToken cancellationToken)
         {
-            return Ok(await _service.UpdateArticle(id, model, cancellationToken));
+            var userId = UserExtension.GetUserId(HttpContext);
+
+            return Ok(await _service.UpdateArticle(userId,id, model, cancellationToken));
         }
 
         [HttpDelete]
         [Route("{id}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Article Deleted", Type = typeof(ArticleResource))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CanWriteArticle, CanManageUsers")]
         public async Task<ActionResult<ArticleResource>> DeleteArticle([FromRoute] int id, CancellationToken cancellationToken)
         {
             return Ok(await _service.DeleteArticle(id, cancellationToken));
