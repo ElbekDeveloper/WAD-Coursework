@@ -49,10 +49,11 @@ namespace Core.Services
             return _mapper.Map<ArticleResource>(article);
         }
 
-        public async Task<ArticleResource> UpdateArticle(int id,AddArticleResource articleResource, CancellationToken cancellationToken = default)
+        public async Task<ArticleResource> UpdateArticle(string userId, int id,AddArticleResource articleResource, CancellationToken cancellationToken = default)
         {
             var article = _mapper.Map<Article>(articleResource);
             article.Id = id;
+            article.AuthorId = userId;
             article.UpdatedDate = DateTime.UtcNow;
             await _articleRepository.UpdateAsync(article, cancellationToken);
             return await GetArticle(article.Id, cancellationToken);

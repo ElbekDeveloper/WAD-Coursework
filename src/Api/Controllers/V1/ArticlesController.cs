@@ -72,7 +72,9 @@ namespace Api.Controllers.V1
 
         public async Task<ActionResult<ArticleResource>> UpdateArticle([FromRoute][Required] int id,[FromBody][Required] AddArticleResource model, CancellationToken cancellationToken)
         {
-            return Ok(await _service.UpdateArticle(id, model, cancellationToken));
+            var userId = UserExtension.GetUserId(HttpContext);
+
+            return Ok(await _service.UpdateArticle(userId,id, model, cancellationToken));
         }
 
         [HttpDelete]
