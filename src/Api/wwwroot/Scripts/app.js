@@ -59,6 +59,11 @@ penApp.config(function ($routeProvider, $httpProvider, jwtOptionsProvider) {
       controller: "WriteArticleController",
       resolve: requireAuthentication()
     })
+    .when("/update/:id", {
+      templateUrl: "../Views/updateArticle.htm",
+      controller: "UpdateArticleController",
+      resolve: requireAuthentication()
+    })
     .when("/manage", {
       templateUrl: "../Views/manageUsers.htm",
       controller: "ManageUsersController",
@@ -74,8 +79,7 @@ penApp.config(function ($routeProvider, $httpProvider, jwtOptionsProvider) {
   //route config ends here
    // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
-      tokenGetter: ['options', function (options) {
-        console.log(options);
+      tokenGetter: ['options', function () {
         return localStorage.getItem('id_token');
       }],
       unauthenticatedRedirectPath: '/login'
@@ -83,30 +87,49 @@ penApp.config(function ($routeProvider, $httpProvider, jwtOptionsProvider) {
 
     $httpProvider.interceptors.push('jwtInterceptor');
 });
-penApp.run(function (authManager, $rootScope) {
+penApp.run(function (authManager, $rootScope, jwtHelper) {
   authManager.redirectWhenUnauthenticated();
   $rootScope.isAuthenticated = localStorage.getItem("id_token") !== null;
+  if ($rootScope.isAuthenticated) {
+    var tokenPayLoad = jwtHelper.decodeToken(localStorage.getItem("id_token"));
+    $rootScope.CanWriteArticle = tokenPayLoad.role.includes("CanWriteArticle");
+    $rootScope.CanManageUsers = tokenPayLoad.sub == "admin@pen.com";
+  }
 });
 penApp.controller('NavController', function ($rootScope,$scope, $log, jwtHelper) {
   $scope.isAuthenticated = $rootScope.isAuthenticated;
   $scope.logout = function () {
     $log.log("Logged out...")
     localStorage.clear();
-    $rootScope.isAuthenticated = false;
-    $scope.isAuthenticated = false;
-    $scope.CanWriteArticle = false;
   };
-  if ($scope.isAuthenticated) {
-    var tokenPayLoad = jwtHelper.decodeToken(localStorage.getItem("id_token"));
-    $scope.CanWriteArticle = tokenPayLoad.role.includes("CanWriteArticle");
-    $scope.CanManageUsers = tokenPayLoad.role.includes("CanManageUsers");
-    $log.log("You can write article: " + $scope.CanWriteArticle);
-    $log.log("You can manage users: " + $scope.CanManageUsers);
+  $scope.canManageUsers = function () {
+    if (localStorage.getItem("id_token") !== null) {
+      var tokenPayLoad = jwtHelper.decodeToken(localStorage.getItem("id_token"));
+      return tokenPayLoad.sub == "admin@pen.com";
+    }
+    else {
+      return false;
+    }
+    
+    
   }
+  $scope.canWriteArticle = function () {
+    if (localStorage.getItem("id_token") !== null) {
+      var tokenPayLoad = jwtHelper.decodeToken(localStorage.getItem("id_token"));
+      return tokenPayLoad.role.includes("CanWriteArticle");
+    }
+    else {
+      return false;
+    }
+
+  }
+  $scope.checkAuthState = function(){
+      return localStorage.getItem("id_token") != null;
+    }
  
 })
 penApp.controller('ArticlesController', function ($scope, $http, $log, customAuthManager) {
-  $log.log(customAuthManager.CheckAuthState());
+  //$log.log(customAuthManager.CheckAuthState());
 
   $http({
 
@@ -127,8 +150,28 @@ penApp.controller('ArticlesController', function ($scope, $http, $log, customAut
   });
   
 });
+penApp.controller('ManageUsersController', function ($scope, $http, $log, customAuthManager) {
+  //$log.log(customAuthManager.CheckAuthState());
 
-penApp.controller('ProfileController', function ($scope, $http, $log, customAuthManager) {
+  $http({
+
+    method: 'GET',
+
+    url: '/api/v1/Author/GetAll',
+
+}).then(function success(response) {
+  // this function will be called when the request is success
+  $scope.users = response.data;
+  
+  }, function error(response) { 
+    // this function will be called when the request returned error status
+    $scope.error = response.error;
+    $log.log($scope.error);
+  });
+  
+});
+
+penApp.controller('ProfileController', function ($scope, $http, $log, $location) {
   $http({
 
     method: 'GET',
@@ -145,6 +188,30 @@ penApp.controller('ProfileController', function ($scope, $http, $log, customAuth
     $log.log($scope.error);
   });
   
+  $scope.delete = function (id) {
+     check = confirm("Are you sure to delete this article?")
+        if(check){
+          $log.log("Yes, OK Pressed");
+          $http({
+
+    method: 'DELETE',
+
+    url: '/api/v1/Articles/' + id,
+
+}).then(function success(response) {
+  // this function will be called when the request is success
+  $scope.users = response.data;
+  
+  }, function error(response) { 
+    // this function will be called when the request returned error status
+    $scope.error = response.error;
+    $log.log($scope.error);
+  });
+        }else{
+            $log.log("No, Cancel Pressed")
+
+        }
+  }
 });
 
 penApp.controller('ArticleDetailsController', function ($scope, $http, $log, $routeParams) {
@@ -167,6 +234,53 @@ penApp.controller('ArticleDetailsController', function ($scope, $http, $log, $ro
   });
 });
 
+
+penApp.controller('UpdateArticleController', function ($scope, $http, $log, $routeParams, $location) {
+    $http({
+
+      method: 'GET',
+
+      url: '/api/v1/Articles/' + $routeParams.id,
+
+      data: 'article'
+
+}).then(function success(response) {
+  // this function will be called when the request is success
+  $scope.article = response.data;
+
+  }, function error(response) { 
+    // this function will be called when the request returned error status
+    $scope.error = response.error;
+    $log.log($scope.error);
+});
+  
+  $scope.update = function () {
+    $http({
+
+    method: 'PUT',
+
+    url: '/api/v1/Articles/' + $scope.article.id,
+
+    data: {
+    "title": $scope.article.title,
+    "body": $scope.article.body
+}
+
+}).then(function success(response) {
+  // this function will be called when the request is success
+  
+  $log.log('Article Updated...');
+  
+  $location.path("/articles/" + response.data.id);
+
+  }, function error(response) { 
+    // this function will be called when the request returned error status
+    $scope.error = response.error;
+    $log.log($scope.error);
+  });
+  } 
+});
+
 penApp.controller('LoginController', function ($rootScope,$scope, $http, $log, $routeParams, jwtHelper, $location) {
   $scope.email = '';
   $scope.password = '';
@@ -187,7 +301,6 @@ penApp.controller('LoginController', function ($rootScope,$scope, $http, $log, $
   $scope.userData = response.data;
   $log.log('Logged in');
   localStorage.setItem('id_token', $scope.userData.token);
-  $rootScope.isAuthenticated = true;
   $location.path("/home");
   
   }, function error(response) { 
@@ -217,7 +330,7 @@ penApp.controller('WriteArticleController', function ($scope, $http, $log, $rout
 }).then(function success(response) {
   // this function will be called when the request is success
   
-  $log.log('new article saved');
+  $log.log('New Article Saved...');
   
   $location.path("/articles/" + response.data.id);
 
