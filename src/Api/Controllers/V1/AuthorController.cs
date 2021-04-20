@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Api.Controllers.V1 {
     [ApiController]
     [Route (ApiRoutes.Generic)]
+    [Authorize (AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller {
         private IAuthorService _service;
 
@@ -35,7 +36,6 @@ namespace Api.Controllers.V1 {
 
         [HttpGet]
         [Route ("GetAll")]
-        [Authorize (AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CanManageUsers")]
         [SwaggerResponse ((int) HttpStatusCode.OK, Description = "All Authors", Type = typeof (IEnumerable<AuthorResource>))]
         [SwaggerResponse ((int) HttpStatusCode.InternalServerError)]
         public async Task<ActionResult<IEnumerable<AuthorResource>>> GetAuthors (CancellationToken cancellationToken) {
@@ -44,7 +44,6 @@ namespace Api.Controllers.V1 {
 
         [HttpGet]
         [Route ("CountAll")]
-        [Authorize (AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CanManageUsers")]
         [SwaggerResponse ((int) HttpStatusCode.OK, Description = "Number of Authors", Type = typeof (int))]
         [SwaggerResponse ((int) HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAuthorsCount (CancellationToken cancellationToken) {
